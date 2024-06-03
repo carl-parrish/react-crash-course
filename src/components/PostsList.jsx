@@ -1,11 +1,10 @@
 import PropTypes from "prop-types";
+import { useState } from "react";
 
 import Modal from "./Modal";
 import NewPost from "./NewPost";
 import Post from "./Post";
 import styles from "./PostsList.module.css";
-
-import { useState } from "react";
 
 PostsList.propTypes = {
   isPosting: PropTypes.bool,
@@ -13,33 +12,31 @@ PostsList.propTypes = {
 };
 
 function PostsList({ isPosting, onStopPosting }) {
-  const [enteredBody, setEnteredBody] = useState("");
-  const [enteredAuthor, setEnteredAuthor] = useState("");
+  const [posts, setPosts] = useState([]);
 
-  function changeBodyHandler(event) {
-    setEnteredBody(event.target.value);
-  }
-
-  function changeAuthorHandler(event) {
-    setEnteredAuthor(event.target.value);
-  }
+  const addPostHandler = (postData) => {
+    setPosts((prevPosts) => {
+      return [postData, ...prevPosts];
+    });
+  };
 
   return (
     <>
       {isPosting && ( // Conditional rendering
         <Modal onClose={onStopPosting}>
-          <NewPost
-            onBodyChange={changeBodyHandler}
-            onAuthorChange={changeAuthorHandler}
-          />
+          <NewPost onAddPost={addPostHandler} onCancel={onStopPosting} />
         </Modal>
       )}
 
-      <ul className={styles.posts}>
-        <Post author={enteredAuthor} body={enteredBody} />
-        <Post author="Manuel" body="Check out the full course!" />
-        <Post author="Julie" body="I love React.js!" />
-      </ul>
+      {/* The posts list */}
+      {posts.length > 0 && (
+        <ul className={styles.posts}>
+          {posts.map((post, index) => (
+            <Post key={index} author={post.author} body={post.body} />
+          ))}
+        </ul>
+      )}
+      {posts.length === 0 && <p className={styles.noPosts}>No posts yet!</p>}
     </>
   );
 }
