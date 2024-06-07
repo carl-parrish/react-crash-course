@@ -1,5 +1,5 @@
 import PropTypes from "prop-types";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 import Modal from "./Modal";
 import NewPost from "./NewPost";
@@ -13,6 +13,15 @@ PostsList.propTypes = {
 
 function PostsList({ isPosting, onStopPosting }) {
   const [posts, setPosts] = useState([]);
+
+  useEffect(() => {
+    async function fetchPosts() {
+      const response = await fetch("http://localhost:8080/posts");
+      const data = await response.json();
+      setPosts(data.posts);
+    }
+    fetchPosts();
+  }, []);
 
   const addPostHandler = (postData) => {
     fetch('http://localhost:8080/posts', {
