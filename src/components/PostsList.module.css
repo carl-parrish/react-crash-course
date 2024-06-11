@@ -9,6 +9,10 @@
   justify-content: center;
 }
 
+.post a {
+  text-decoration: none;
+}
+
 .noPosts {
   text-align: center;
   font-size: 1.5rem;
